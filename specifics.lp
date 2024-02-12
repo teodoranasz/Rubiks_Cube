@@ -1,4 +1,3 @@
-time(0..4). 
+time(0..10). 
 
-:- cubeFinished(3). 
-:- not cubeFinished(4).
+:- not cubeFinished(10).

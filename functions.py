@@ -4,7 +4,7 @@ import visualization as V
 
 paint_parameters = []
 
-### on_model functions applied to first found model
+### on_model functions are applied to first found model
 def create_onmodel(plttime=0, write_instance=False, to_print=[]):
     def on_model(model):
 
@@ -48,19 +48,6 @@ def generate_cube():
 
     V.plot_cube(paint_parameters)
 
-# generates instance with solution in =slvtime steps
-def build_solvable_cube(slvtime):
-    control = clingo.Control()
-    with open('specifics.lp','w') as file:
-        file.write('time(0..'+str(slvtime)+'). \n\n:- cubeFinished('+str(slvtime-1)+'). \n:- not cubeFinished('+str(slvtime)+').')
-    control.load('generator.lp')
-    control.load('cube_rules.lp')
-    control.load('specifics.lp')
-    control.ground([("base", [])])
-    control.solve(on_model=create_onmodel(write_instance=True, to_print=['rotateC', 'cubeF']))
-
-    V.plot_cube(paint_parameters)
-
 # helper: solve_instance solves instance.lp in <=slvtime steps
 def create_solveinstance(slvtime=60,to_print=['rotateC','cubeF']):
     def solve_instance():
@@ -75,6 +62,19 @@ def create_solveinstance(slvtime=60,to_print=['rotateC','cubeF']):
 
         V.plot_cube(paint_parameters)
     return solve_instance
+
+# generates instance with solution in =slvtime steps
+def build_solvable_cube(slvtime):
+    control = clingo.Control()
+    with open('specifics.lp','w') as file:
+        file.write('time(0..'+str(slvtime)+'). \n\n:- cubeFinished('+str(slvtime-1)+'). \n:- not cubeFinished('+str(slvtime)+').')
+    control.load('generator.lp')
+    control.load('cube_rules.lp')
+    control.load('specifics.lp')
+    control.ground([("base", [])])
+    control.solve(on_model=create_onmodel(write_instance=True, to_print=['rotateC', 'cubeF']))
+
+    V.plot_cube(paint_parameters)
 
 # input array of pairs (face, 1/-1 for clockwise/counter)
 # vernünftige rechenzeit bis timestep = 12
