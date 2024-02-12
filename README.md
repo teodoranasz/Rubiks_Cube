@@ -27,7 +27,7 @@ paintCorner(row = t/b, column = l/r, face, color, time = 0).
 solver = F.create_solveinstance()
 solver()
 ```
-- Lösungsvorschrift als Abfolge von Rotationen _(face,timestep)_ im Uhrzeigersinn wird in der Konsole ausgegeben
+- Lösungsvorschrift als Abfolge von Rotationen "_rotateClockwise(face,time)_" im Uhrzeigersinn wird in der Konsole ausgegeben
 - default Lösezeit _(slvtime=60)_ reicht für jede Konfiguration
 - Suchraum exponentiell (6^60 Möglichkeiten), gewöhnliche Rechenleistung reicht nicht aus
 
