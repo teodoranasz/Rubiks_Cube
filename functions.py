@@ -11,7 +11,7 @@ def create_onmodel(plttime=0, write_instance=False, to_print=[]):
         # extract array of predicates that constitute model
         solution = [str(atom) for atom in model.symbols(shown=True)]
 
-        # optional: output instance in instance.lp
+        # optional: output instance at plttime in instance.lp
         if write_instance:
             with open('instance.lp', 'w') as file:
                 for predicate in solution:
@@ -36,47 +36,6 @@ def create_onmodel(plttime=0, write_instance=False, to_print=[]):
                 entry = P.parse_paint_mid(predicate)
                 paint_parameters.append(entry)
     return on_model
-#
-# # used in generate_cube
-# def extract_cube(model):
-#     with open('instance.lp','w') as file:
-#         # write predicates that constitute model to instance.lp
-#         solution = [str(atom) for atom in model.symbols(shown=True)]
-#         for predicate in solution:
-#             if 'paint' in predicate:
-#                 file.write(predicate + ".\n")
-#
-#     # specify which predicates to use for visualization: timestep 0
-#     for predicate in solution:
-#         if "paintCorner" in predicate and ',0)' in predicate:
-#             entry = P.parse_paint_corner(predicate)
-#             paint_parameters.append(entry)
-#         elif "paintMid" in predicate and ',0)' in predicate:
-#             entry = P.parse_paint_mid(predicate)
-#             paint_parameters.append(entry)
-#
-# # used in diy_cube
-# # creates time-specific diy_onmodel
-# def time_spec_diy_onmodel(time):
-#     def diy_onmodel(model):
-#         # extract array of predicates that constitute model
-#         solution = [str(atom) for atom in model.symbols(shown=True)]
-#         # write predicates that constitute model to instance.lp
-#         with open('instance.lp', 'w') as file:
-#             solution = [str(atom) for atom in model.symbols(shown=True)]
-#             for predicate in solution:
-#                 if 'paint' in predicate:
-#                     file.write(predicate + ".\n")
-#
-#         for predicate in solution:
-#             if "paintCorner" in predicate and str(time)+')' in predicate:
-#                 entry = P.parse_paint_corner(predicate)
-#                 paint_parameters.append(entry)
-#             elif "paintMid" in predicate and str(time)+')' in predicate:
-#                 entry = P.parse_paint_mid(predicate)
-#                 paint_parameters.append(entry)
-#     return diy_onmodel
-
 
 ### running functions
 
@@ -98,12 +57,12 @@ def build_solvable_cube(slvtime):
     control.load('cube_rules.lp')
     control.load('specifics.lp')
     control.ground([("base", [])])
-    control.solve(on_model=create_onmodel(to_print=['rotateC', 'cubeF']))
+    control.solve(on_model=create_onmodel(write_instance=True, to_print=['rotateC', 'cubeF']))
 
     V.plot_cube(paint_parameters)
 
 # helper: solve_instance solves instance.lp in <=slvtime steps
-def create_solveinstance(slvtime,to_print=['rotateC','cubeF']):
+def create_solveinstance(slvtime=60,to_print=['rotateC','cubeF']):
     def solve_instance():
         with open('specifics.lp', 'w') as file:
             file.write('time(0..' + str(slvtime) + '). \n\n:- not cubeFinished('+ str(slvtime) + ').')
