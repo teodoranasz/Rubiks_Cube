@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 
-
 def create_plot(ax,face,paint_parameters):
     colors = ['white', 'red', 'blue', 'yellow', 'orange', 'green']
     entries_of_face = [entry for entry in paint_parameters if entry['face'] == face]

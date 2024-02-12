@@ -27,6 +27,7 @@ paintCorner(row = t/b, column = l/r, face, color, time = 0).
 solver = F.create_solveinstance()
 solver()
 ```
+- Lösungsvorschrift als Abfolge von Rotationen _(face,timestep)_ im Uhrzeigersinn wird in der Konsole ausgegeben
 - default Lösezeit _(slvtime=60)_ reicht für jede Konfiguration
 - Suchraum exponentiell (6^60 Möglichkeiten), gewöhnliche Rechenleistung reicht nicht aus
 
@@ -42,9 +43,16 @@ F.build_solvable_cube(time)
 - Nutzer kann die Lösungsvorschrift rückwärts ablaufen, um die generierte Konfiguration in Echt nachzubauen
 
 ### Konfiguration nach Vorschrift generieren
-- gewünschte Abfolge von Rotationen als Array von Tupeln _(Seite = 1..6, Richtung = +/- 1)_ angeben, zB:
+- gewünschte Abfolge von Rotationen als Array von Tupeln _(Seite = 1..6, Richtung = +/- 1)_ angeben
+- Redundanz (Loops) ist nicht erlaubt (genaue Vorgabe s. _cube_rules.lp_, Zeile 18)
+
+gültiges Beispiel:
 ```python
 moves = [(1,1),(3,-1),(2,-1),(4,-1),(5,1),(1,1)]
+```
+ungültiges Beispiel:
+```python
+moves = [(2,-1),(1,1),(1,1),(1,1),(1,1)]
 ```
 - Ergebnis nach Anwendung dieser Abfolge auf Startkonfiguration (default: gelöster Würfel) aus _diy.lp_ berechnen
 ```python

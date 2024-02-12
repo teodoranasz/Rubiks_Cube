@@ -13,7 +13,7 @@ def create_onmodel(plttime=0, write_instance=False, to_print=[]):
 
         # optional: output instance at plttime in instance.lp
         if write_instance:
-            with open('instance.lp', 'w') as file:
+            with open('lp_files/instance.lp', 'w') as file:
                 for predicate in solution:
                     if 'paint' in predicate and ','+str(plttime)+')' in predicate:
                         crop = len(str(plttime))+1
@@ -42,7 +42,7 @@ def create_onmodel(plttime=0, write_instance=False, to_print=[]):
 # runs generator to output some instance, store in instance.lp
 def generate_cube():
     control = clingo.Control()
-    control.load('generator.lp')
+    control.load('lp_files/generator.lp')
     control.ground([("base", [])])
     control.solve(on_model=create_onmodel(write_instance=True))
 
@@ -51,12 +51,12 @@ def generate_cube():
 # helper: solve_instance solves instance.lp in <=slvtime steps
 def create_solveinstance(slvtime=60,to_print=['rotateC','cubeF']):
     def solve_instance():
-        with open('specifics.lp', 'w') as file:
+        with open('lp_files/specifics.lp', 'w') as file:
             file.write('time(0..' + str(slvtime) + '). \n\n:- not cubeFinished('+ str(slvtime) + ').')
         control = clingo.Control()
-        control.load('cube_rules.lp')
-        control.load('specifics.lp')
-        control.load('instance.lp')
+        control.load('lp_files/cube_rules.lp')
+        control.load('lp_files/specifics.lp')
+        control.load('lp_files/instance.lp')
         control.ground([("base", [])])
         control.solve(on_model=create_onmodel(to_print=to_print))
 
@@ -66,11 +66,11 @@ def create_solveinstance(slvtime=60,to_print=['rotateC','cubeF']):
 # generates instance with solution in =slvtime steps
 def build_solvable_cube(slvtime):
     control = clingo.Control()
-    with open('specifics.lp','w') as file:
+    with open('lp_files/specifics.lp','w') as file:
         file.write('time(0..'+str(slvtime)+'). \n\n:- cubeFinished('+str(slvtime-1)+'). \n:- not cubeFinished('+str(slvtime)+').')
-    control.load('generator.lp')
-    control.load('cube_rules.lp')
-    control.load('specifics.lp')
+    control.load('lp_files/generator.lp')
+    control.load('lp_files/cube_rules.lp')
+    control.load('lp_files/specifics.lp')
     control.ground([("base", [])])
     control.solve(on_model=create_onmodel(write_instance=True, to_print=['rotateC', 'cubeF']))
 
@@ -80,7 +80,7 @@ def build_solvable_cube(slvtime):
 # vernünftige rechenzeit bis timestep = 12
 def diy_cube(moves):
     timestep = 0
-    with open('diy.lp', 'a') as file:
+    with open('lp_files/diy.lp', 'a') as file:
         for face, orientation in moves:
             if orientation > 0:
                 file.write('\nrotateClockwise(' + str(face) + ',' + str(timestep) + ').')
@@ -91,14 +91,14 @@ def diy_cube(moves):
         file.write('\n\ntime(0..'+str(timestep)+').')
 
     control = clingo.Control()
-    control.load('cube_rules.lp')
-    control.load('diy.lp')
+    control.load('lp_files/cube_rules.lp')
+    control.load('lp_files/diy.lp')
     control.ground([("base", [])])
     control.solve(on_model=create_onmodel(plttime=timestep,write_instance=True))
 
-    with open('diy.lp', 'r') as file:
+    with open('lp_files/diy.lp', 'r') as file:
         content = file.readlines()
-    with open('diy.lp', 'w') as file:
+    with open('lp_files/diy.lp', 'w') as file:
         file.writelines(content[:13])
 
     V.plot_cube(paint_parameters)
